@@ -1,11 +1,10 @@
-
-import View from "@/componets/cards/componente";
-import styles from "./page.module.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Navbar from "@/componets/navbar";
 
 export default function Home() {
   return (
-    <>
-        <View/>
-    </>
+   <div>
+          <Navbar/>
+   </div>
   );
 }

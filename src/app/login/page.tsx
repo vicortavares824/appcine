@@ -1,7 +1,9 @@
+import Link from "next/link";
+
 export default function Login() {
 
     return (
-        <div className="container mt-5">
+        <div className="container mt-5 w-50">
             <h2 className="text-center">Login</h2>
             <form className="row g-3 m-5">
                 <div className="mb-3">
@@ -12,7 +14,7 @@ export default function Login() {
                     <label htmlFor="password" className="form-label">Senha</label>
                     <input type="password" className="form-control" id="password" placeholder="Digite sua senha" />
                 </div>
-                <button type="submit" className="btn btn-primary">Entrar</button>
+                <Link  href="/filmes" className="btn btn-primary">Entrar</Link>
             </form>
         </div>
     );
