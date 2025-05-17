@@ -10,7 +10,7 @@ export default function Navbar() {
       <ul className="navbar-nav ms-auto">
         
         <li className="nav-item">
-          <a className="nav-link" href="#filmes">Filmes</a>
+          <a className="nav-link" href="#">Filmes</a>
         </li>
         <li className="nav-item">
           <a className="nav-link" href="#series">Séries</a>
