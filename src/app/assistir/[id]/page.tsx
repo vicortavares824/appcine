@@ -7,7 +7,7 @@ import Link from "next/link";
 export default function VideoPlayer() {
   const params = useParams();
   const id = params?.id;
-  const videoUrl = 'https://vidlink.pro/movie/' + id+'?primaryColor=0de343&secondaryColor=35be23&iconColor=eefdec&icons=default&player=default&title=true&poster=true&autoplay=false&nextbutton=false';
+  const videoUrl = 'https://vidlink.pro/movie/' + id+'?primaryColor=63b8bc&secondaryColor=0f57c2&iconColor=eefdec&icons=default&player=default&title=true&poster=true&autoplay=false&nextbutton=false';
 
   return (
     <div className="container py-5">
