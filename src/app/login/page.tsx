@@ -14,7 +14,7 @@ export default function Login() {
                     <label htmlFor="password" className="form-label">Senha</label>
                     <input type="password" className="form-control" id="password" placeholder="Digite sua senha" />
                 </div>
-                <Link  href="/filmes" className="btn btn-primary">Entrar</Link>
+                <Link  href="/filme" className="btn btn-primary">Entrar</Link>
             </form>
         </div>
     );

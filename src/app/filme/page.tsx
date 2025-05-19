@@ -2,8 +2,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
-
 type Movie = {
   id: number;
   title: string;
@@ -104,15 +102,7 @@ function AlbumGrid({ movies }: { movies: Movie[] }) {
 function AlbumCard({ movie }: { movie: Movie }) {
   return (
     <div className="card m-2 shadow-sm h-100 d-flex flex-column" style={{ width: '16rem', minHeight: '32rem' }}>
-      <Image 
-        src={`https://image.tmdb.org/t/p/original/${movie.poster_path}`}
-        className="card-img-top p-3"
-        alt={movie.title}
-        width={300}
-        height={350}
-        style={{ height: '350px', objectFit: 'cover' }}
-        priority
-      />
+      <img src={`https://image.tmdb.org/t/p/original/${movie.poster_path}`} className="card-img-top p-3" alt={movie.title}style={{ height: '350px', objectFit: 'cover' }}/>
       <div className="card-body d-flex flex-column" style={{ height: '250px' }}>
         <p className="card-title text-center">Titulo: {movie.title}</p>
         <p className="card-text">Nota: {movie.vote_average}</p>
