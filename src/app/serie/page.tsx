@@ -2,6 +2,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 type Serie = {
   id: number;
@@ -137,7 +138,15 @@ function AlbumCard({ movie }: { movie: Serie }) {
      const id = `${movie.id}/${selectedSeason}/${selectedEpisode}`
   return (
     <div className="card m-2 shadow-sm h-100 d-flex flex-column" style={{ width: '16rem', minHeight: '40rem' }}>
-      <img src={`https://image.tmdb.org/t/p/original/${movie.poster_path ? movie.poster_path : movie.backdrop_path}`} className="card-img-top p-3" alt={movie.name} style={{ height: '350px', objectFit: 'cover' }}/>
+      <Image
+        src={`https://image.tmdb.org/t/p/original/${movie.poster_path ? movie.poster_path : movie.backdrop_path}`}
+        className="card-img-top p-3"
+        alt={movie.name}
+        width={300}
+        height={350}
+        style={{ height: '350px', objectFit: 'cover' }}
+        priority
+      />
       <div className="card-body d-flex flex-column" style={{ height: '250px' }}>
         <p className="card-title text-center">Titulo: {movie.name}</p>
         <p className="card-text">Nota: {movie.vote_average}</p>

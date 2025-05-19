@@ -11,7 +11,7 @@ export default function VideoPlayer() {
   const allParams = params?.params || [];
 
   let videoUrl = '';
-  let isSerie = tipo === 'serie';
+  const isSerie = tipo === 'serie';
 
   if (isSerie) {
     // Esperado: [id, temporada, episodio]
