@@ -3,6 +3,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import Navbar from "@/componets/navbar";
 
 type Serie = {
   id: number;
@@ -54,18 +55,7 @@ export default function Filmes() {
   };
   return (
     <main>
-      <nav className="navbar navbar-expand-lg  bg-white shadow-sm ">
-        <div className="container-fluid">
-          <div className="collapse navbar-collapse justify-content-center" id="navbarNavApp">
-            <ul className="navbar-nav  "> 
-              <li className="nav-item ms-lg-3 m-2">
-              <Link href="/filme" className=" btn btn-outline-dark rounded-pill me-2">Filmes</Link>
-              <Link href="/serie" className=" btn btn-outline-dark rounded-pill me-2">Series</Link>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
+     <Navbar/>
       <AlbumGrid series={series} />
         <div className="d-flex justify-content-center my-4 gap-2">
         <button
