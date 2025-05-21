@@ -20,8 +20,19 @@ export default function Inicio() {
 
   useEffect(() => {
     // Ordena por ano (release_date) do maior para o menor
-   
-    const moviesArr = Array.isArray(moviesJson) ? moviesJson : [];
+    const moviesArr = Array.isArray(moviesJson)
+      ? moviesJson
+          .filter((item) => typeof item.title === 'string' && !!item.title)
+          .map((item) => ({
+            id: item.id,
+            title: item.title || 'Filme sem título',
+            overview: item.overview || '',
+            poster_path: item.poster_path ?? null,
+            release_date: item.release_date || '',
+            vote_average: item.vote_average ?? 0,
+            genres: item.genres ?? [],
+          }))
+      : [];
     const sorted = [...moviesArr].sort((a, b) => {
       const yearA = a.release_date ? parseInt(a.release_date.slice(0, 4)) : 0;
       const yearB = b.release_date ? parseInt(b.release_date.slice(0, 4)) : 0;
