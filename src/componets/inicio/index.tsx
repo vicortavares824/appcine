@@ -1,5 +1,5 @@
 'use client'
-import moviesJson from '../../../movies.json';
+import moviesJson from '../../../public/movies.json';
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";

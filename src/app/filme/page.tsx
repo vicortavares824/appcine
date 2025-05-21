@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Navbar from "@/componets/navbar";
-import moviesJson from '../../../movies.json';
 import MovieDetailsModal from "../../componets/inicio/MovieDetailsModal";
 type Movie = {
   id: number;
@@ -20,20 +19,24 @@ export default function Filmes() {
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
-    // Simula paginação local usando o JSON
-    const pageSize = 20; // ou o valor desejado
-    // Garante que o JSON é um array
-    const moviesArr: Movie[] = Array.isArray(moviesJson) ? moviesJson : [];
-    // Ordena por ano (release_date) do maior para o menor
-    const sorted = [...moviesArr].sort((a, b) => {
-      const yearA = a.release_date ? parseInt(a.release_date.slice(0, 4)) : 0;
-      const yearB = b.release_date ? parseInt(b.release_date.slice(0, 4)) : 0;
-      return yearB - yearA;
-    });
-    const start = (page - 1) * pageSize;
-    const end = start + pageSize;
-    setMovies(sorted.slice(start, end));
-    setTotalPages(Math.ceil(sorted.length / pageSize));
+    const pageSize = 20;
+    fetch('/movies.json')
+      .then(res => res.json())
+      .then((moviesArr: Movie[]) => {
+        const sorted = [...moviesArr].sort((a, b) => {
+          const yearA = a.release_date ? parseInt(a.release_date.slice(0, 4)) : 0;
+          const yearB = b.release_date ? parseInt(b.release_date.slice(0, 4)) : 0;
+          return yearB - yearA;
+        });
+        const start = (page - 1) * pageSize;
+        const end = start + pageSize;
+        setMovies(sorted.slice(start, end));
+        setTotalPages(Math.ceil(sorted.length / pageSize));
+      })
+      .catch(() => {
+        setMovies([]);
+        setTotalPages(1);
+      });
   }, [page]);
 
   return (
