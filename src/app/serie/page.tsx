@@ -9,7 +9,7 @@ import seriesJson from "../../../series.json"; // Supondo que você tenha um JSO
 
 type Serie = {
   id: number;
-  name: string;
+  name?: string; // agora opcional para aceitar undefined
   overview: string;
   poster_path: string | null;
   backdrop_path: string | null;
@@ -99,7 +99,7 @@ function SerieCard({ serie }: { serie: Serie }) {
               <Image
                 src={`https://image.tmdb.org/t/p/original/${serie.poster_path}`}
                 className="card-img-top"
-                alt={serie.name}
+                alt={serie.name || "Série sem nome"}
                 width={300}
                 height={300}
               />
@@ -145,7 +145,7 @@ function SerieCard({ serie }: { serie: Serie }) {
                   </svg>
                   Ver Detalhes
                 </button>
-                <MovieDetailsModal item={{ ...serie, title: serie.name, release_date: serie.first_air_date, genres: serie.genres ?? [] }} modalId={modalId} />
+                <MovieDetailsModal item={{ ...serie, title: serie.name || "Série sem nome", release_date: serie.first_air_date, genres: serie.genres ?? [] }} modalId={modalId} />
               </div>
             </div>
           </div>
