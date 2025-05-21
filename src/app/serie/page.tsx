@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import Navbar from "@/componets/navbar";
 import MovieDetailsModal from "../../componets/inicio/MovieDetailsModal";
-import seriesJson from "../../../series.json"; // Supondo que você tenha um JSON de séries
 
 type Serie = {
   id: number;
@@ -26,16 +25,33 @@ export default function Series() {
 
   useEffect(() => {
     const pageSize = 20;
-    const seriesArr: Serie[] = Array.isArray(seriesJson) ? seriesJson : [];
-    const sorted = [...seriesArr].sort((a, b) => {
-      const yearA = a.first_air_date ? parseInt(a.first_air_date.slice(0, 4)) : 0;
-      const yearB = b.first_air_date ? parseInt(b.first_air_date.slice(0, 4)) : 0;
-      return yearB - yearA;
-    });
-    const start = (page - 1) * pageSize;
-    const end = start + pageSize;
-    setSeries(sorted.slice(start, end));
-    setTotalPages(Math.ceil(sorted.length / pageSize));
+    fetch("/series.json")
+      .then((res) => res.json())
+      .then((data) => {
+        // Garante que todos os objetos tenham as propriedades mínimas
+        const seriesArr: Serie[] = Array.isArray(data)
+          ? data.map((item) => ({
+              id: item.id,
+              name: item.name || "Série sem nome",
+              overview: item.overview || "",
+              poster_path: item.poster_path ?? null,
+              backdrop_path: item.backdrop_path ?? null,
+              first_air_date: item.first_air_date || "",
+              vote_average: item.vote_average ?? 0,
+              genres: item.genres ?? [],
+              seasons: item.seasons ?? [],
+            }))
+          : [];
+        const sorted = [...seriesArr].sort((a, b) => {
+          const yearA = a.first_air_date ? parseInt(a.first_air_date.slice(0, 4)) : 0;
+          const yearB = b.first_air_date ? parseInt(b.first_air_date.slice(0, 4)) : 0;
+          return yearB - yearA;
+        });
+        const start = (page - 1) * pageSize;
+        const end = start + pageSize;
+        setSeries(sorted.slice(start, end));
+        setTotalPages(Math.ceil(sorted.length / pageSize));
+      });
   }, [page]);
 
   return (
