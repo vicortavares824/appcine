@@ -22,7 +22,20 @@ export default function Filmes() {
     const pageSize = 20;
     fetch('/movies.json')
       .then(res => res.json())
-      .then((moviesArr: Movie[]) => {
+      .then((data) => {
+        // Garante que só filmes válidos sejam usados e preenche campos obrigatórios
+        const moviesArr: Movie[] = Array.isArray(data)
+          ? data
+              .filter((item) => typeof item.title === 'string' && !!item.title)
+              .map((item) => ({
+                id: item.id,
+                title: item.title || 'Filme sem título',
+                overview: item.overview || '',
+                poster_path: item.poster_path ?? null,
+                release_date: item.release_date || '',
+                vote_average: item.vote_average ?? 0,
+              }))
+          : [];
         const sorted = [...moviesArr].sort((a, b) => {
           const yearA = a.release_date ? parseInt(a.release_date.slice(0, 4)) : 0;
           const yearB = b.release_date ? parseInt(b.release_date.slice(0, 4)) : 0;
