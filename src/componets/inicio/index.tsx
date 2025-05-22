@@ -43,9 +43,7 @@ export default function Inicio() {
 
   return (
     <>
-      <div className="position-relative">
-        {/* ...hero section fixa, se quiser pode remover daqui... */}
-      </div>
+    
 
       <div className="container py-5">
         <div className="d-flex justify-content-between align-items-center mb-4">
@@ -75,7 +73,7 @@ export default function Inicio() {
 
 function MovieCard({ movie }: { movie: Movie }) {
   return (
-    <div className="col">
+    <div className="col-sm-6 col-md-4 col-lg-3">
       <div className="card h-100 bg-dark text-white border-0 shadow">
         <div className="position-relative">
           <Image
