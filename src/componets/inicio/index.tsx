@@ -1,5 +1,4 @@
 'use client'
-import moviesJson from '../../../public/movies.json';
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -19,26 +18,34 @@ export default function Inicio() {
   const [movies, setMovies] = useState<Movie[]>([]);
 
   useEffect(() => {
-    // Ordena por ano (release_date) do maior para o menor
-    const moviesArr = Array.isArray(moviesJson)
-      ? moviesJson
-          .filter((item) => typeof item.title === 'string' && !!item.title)
-          .map((item) => ({
-            id: item.id,
-            title: item.title || 'Filme sem título',
-            overview: item.overview || '',
-            poster_path: item.poster_path ?? null,
-            release_date: item.release_date || '',
-            vote_average: item.vote_average ?? 0,
-            genres: item.genres ?? [],
-          }))
-      : [];
-    const sorted = [...moviesArr].sort((a, b) => {
-      const yearA = a.release_date ? parseInt(a.release_date.slice(0, 4)) : 0;
-      const yearB = b.release_date ? parseInt(b.release_date.slice(0, 4)) : 0;
-      return yearB - yearA;
-    });
-    setMovies(sorted.slice(0, 20));
+    async function fetchMovies() {
+      try {
+        const res = await fetch('https://api-movie-sigma.vercel.app/api/filmes?keyid=60b55db2a598d09f914411a36840d1cb');
+        const data = await res.json();
+        const moviesArr: Movie[] = Array.isArray(data)
+          ? data
+              .filter((item) => typeof item.title === 'string' && !!item.title)
+              .map((item) => ({
+                id: item.id,
+                title: item.title || 'Filme sem título',
+                overview: item.overview || '',
+                poster_path: item.poster_path ?? null,
+                release_date: item.release_date || '',
+                vote_average: item.vote_average ?? 0,
+                genres: item.genres ?? [],
+              }))
+          : [];
+        const sorted = [...moviesArr].sort((a, b) => {
+          const yearA = a.release_date ? parseInt(a.release_date.slice(0, 4)) : 0;
+          const yearB = b.release_date ? parseInt(b.release_date.slice(0, 4)) : 0;
+          return yearB - yearA;
+        });
+        setMovies(sorted.slice(0, 20));
+      } catch {
+        setMovies([]);
+      }
+    }
+    fetchMovies();
   }, []);
 
   return (
