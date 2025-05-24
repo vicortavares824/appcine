@@ -1,3 +1,4 @@
+import Link from "next/link"
 export default function Footer() {
     return (
         <>
@@ -26,50 +27,21 @@ export default function Footer() {
               <h5 className="mb-3">Links</h5>
               <ul className="list-unstyled">
                 <li className="mb-2">
-                  <a href="#" className=" text-decoration-none">
+                  <Link href="/" className=" text-decoration-none">
                     Início
-                  </a>
+                  </Link>
                 </li>
                 <li className="mb-2">
-                  <a href="#" className=" text-decoration-none">
+                  <Link href="/filme" className=" text-decoration-none">
                     Filmes
-                  </a>
+                  </Link>
                 </li>
                 <li className="mb-2">
-                  <a href="#" className=" text-decoration-none">
+                  <Link href="/serie" className=" text-decoration-none">
                     Séries
-                  </a>
+                  </Link>
                 </li>
-                <li className="mb-2">
-                  <a href="#" className=" text-decoration-none">
-                    Categorias
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div className="col-lg-2 col-md-6 mb-4 mb-lg-0">
-              <h5 className="mb-3">Suporte</h5>
-              <ul className="list-unstyled">
-                <li className="mb-2">
-                  <a href="#" className=" text-decoration-none">
-                    FAQ
-                  </a>
-                </li>
-                <li className="mb-2">
-                  <a href="#" className=" text-decoration-none">
-                    Contato
-                  </a>
-                </li>
-                <li className="mb-2">
-                  <a href="#" className=" text-decoration-none">
-                    Termos de Uso
-                  </a>
-                </li>
-                <li className="mb-2">
-                  <a href="#" className=" text-decoration-none">
-                    Privacidade
-                  </a>
-                </li>
+                
               </ul>
             </div>
             <div className="col-lg-4">

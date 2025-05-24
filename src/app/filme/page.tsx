@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Navbar from "@/componets/navbar";
 import AlbumGrid from "@/componets/inicio/AlbumGrid";
 import filmesJson from '../../../filmes.json';
+import Footer from "@/componets/footer";
 
 
 // Definição do tipo Movie
@@ -77,7 +78,7 @@ export default function Filmes() {
           <AlbumGrid movies={movies} allMoviesData={movies} />
           <div className="d-flex justify-content-center my-4 gap-2">
             <button
-              className="btn btn-outline-primary"
+              className="btn btn-outline-success"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
             >
@@ -87,7 +88,7 @@ export default function Filmes() {
             </button>
             <span className="align-self-center">Página {page} de {totalPages}</span>
             <button
-              className="btn btn-outline-primary"
+              className="btn btn-outline-success"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
             >
@@ -98,6 +99,7 @@ export default function Filmes() {
           </div>
         </>
       )}
+      <Footer/>
     </main>
   );
 }

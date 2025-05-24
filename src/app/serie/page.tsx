@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Navbar from "@/componets/navbar";
 import AlbumGridSeries from "@/componets/inicioSeries/AlbumGridSeries";
 import seriesJson from '../../../series.json';
+import Footer from "@/componets/footer";
 
 // Garante que a estrutura é a esperada
 function getPageArray(json: Record<string, unknown>): Serie[][] {
@@ -58,7 +59,7 @@ export default function Series() {
   const totalPages = Array.isArray(pages) ? pages.length : 1;
 
   return (
-    <main>
+    <main className="bg-dark text-white">
       <Navbar />
       <AlbumGridSeries movies={seriesPage} allMoviesData={seriesPage} />
       {loading ? (
@@ -69,9 +70,9 @@ export default function Series() {
         <div className="text-center py-5 text-white">Nenhuma série encontrada.</div>
       ) : (
         <>
-          <div className="d-flex justify-content-center my-4 gap-2">
+          <div className="d-flex justify-content-center my-4 gap-2  ">
             <button
-              className="btn btn-outline-primary"
+              className="btn btn-outline-success"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
             >
@@ -81,7 +82,7 @@ export default function Series() {
             </button>
             <span className="align-self-center text-white">Página {page} de {totalPages}</span>
             <button
-              className="btn btn-outline-primary"
+              className="btn btn-outline-success"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
             >
@@ -92,6 +93,7 @@ export default function Series() {
           </div>
         </>
       )}
+        <Footer/>
     </main>
   );
 }
