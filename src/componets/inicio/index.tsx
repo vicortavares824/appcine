@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import MovieDetailsModal from "./MovieDetailsModal";
 import filmesJson from '../../../filmes.json';
-
+import Select from "../select";
 // Função para transformar { "page 1": [...], "page 2": [...] } em array de páginas
 function getPageArray(json: Record<string, unknown>): Movie[][] {
   const pageArrays: Movie[][] = [];
@@ -52,20 +52,7 @@ export default function Inicio() {
   return (
     <>
       <div className="container py-5">
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <h2 className="fw-bold">Em Alta</h2>
-          <ul className="nav nav-pills">
-            <li className="nav-item">
-              <a className="nav-link active bg-success" href="#">Todos</a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link text-dark" href="#">Filmes</a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link text-dark" href="#">Séries</a>
-            </li>
-          </ul>
-        </div>
+        <Select/>
         {loading && <div className="text-center">Carregando...</div>}
         {!loading && movies.length > 0 && <MovieCardplayer movie={movies[0]} />}
         <div className="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-4">
@@ -80,15 +67,15 @@ export default function Inicio() {
 
 function MovieCard({ movie }: { movie: Movie }) {
   return (
-    <div className="col-sm-6 col-md-4 col-lg-3">
-      <div className="card h-100 bg-dark text-white border-0 shadow">
+    <div className="col-sm-1 col-md-4 col-lg-3">
+      <div className="card  bg-dark text-white border-0 shadow">
         <div className="position-relative">
           <Image
             src={`https://image.tmdb.org/t/p/original/${movie.poster_path}`}
             className="card-img-top"
             alt={movie.title}
             width={300}
-            height={280}
+            height={260}
           />
           <div className="position-absolute top-0 end-0 p-2">
             <span className="badge bg-success">{movie.vote_average}</span>
@@ -145,7 +132,7 @@ function MovieCardplayer({ movie }: { movie: Movie }) {
             <div className="col-md-6 text-start">
               <span className="badge bg-success mb-2">Mais Escolhido</span>
               <h1 className="display-4 fw-bold mb-3">{movie.title}</h1>
-              <p className="lead mb-4">
+              <p className="lead mb-4 text-truncate">
                 {movie.overview ? movie.overview : "Sem descrição."}
               </p>
               <div className="d-flex gap-2">
@@ -164,7 +151,7 @@ function MovieCardplayer({ movie }: { movie: Movie }) {
                 </Link>
                 <button
                   type="button"
-                  className="btn btn-outline-light btn-lg"
+                  className="btn btn-outline-light"
                   data-bs-toggle="modal"
                   data-bs-target="#quickViewModal"
                 >

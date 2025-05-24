@@ -20,7 +20,11 @@ export default function Home() {
 
     
     <Navbar/>
-
+    <div className="container py-5">
+      <h1 className="text-center mb-2">Bem-vindo ao CineStream</h1>
+      <p className="text-center ">Sua plataforma de streaming para filmes e séries</p>
+    </div>
+   
      <Inicio />
     <Series/>
      <Footer/>

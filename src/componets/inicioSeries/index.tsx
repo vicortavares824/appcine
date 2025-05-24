@@ -74,9 +74,7 @@ export default function Series() {
 
   return (
     <>
-      <div className="position-relative">
-        {/* ...hero section fixa, se quiser pode remover daqui... */}
-      </div>
+      
 
       <div className="bg-light py-5">
         <div className="container">
@@ -125,16 +123,15 @@ export default function Series() {
 
 function SeriesCard({ movie }: { movie: Serie }) {
   return (
-    <div className="col">
-      <div className="card h-100 bg-dark text-white border-0 shadow w-100">
+    <div className="col-sm-1 col-md-4 col-lg-3">
+      <div className="card h-100 bg-dark text-white border-0 shadow w-100 ">
         <div className="position-relative">
           <Image
             src={`https://image.tmdb.org/t/p/original/${movie.poster_path ? movie.poster_path : movie.backdrop_path}`}
             className="card-img-top p-3"
             alt={movie.name ? movie.name : "Poster da série"}
-            width={300}
-            height={450}
-            style={{ height: '450px', objectFit: 'cover' }}
+            width={200}
+            height={260}
             priority
           />
           <div className="position-absolute top-0 end-0 m-3">
@@ -162,7 +159,8 @@ function SeriesCard({ movie }: { movie: Serie }) {
           <div className="d-flex justify-content-between align-items-center">
             <Link href={`/assistir/serie/${movie.id}/1/1`} className="btn btn-sm btn-outline-light">Assistir</Link>
             <button data-bs-toggle="modal"
-                  data-bs-target="#quickViewModal2" className="btn btn-sm btn-link text-success p-0">Ver Detalhes</button>
+        data-bs-target={`#quickViewModal-serie-${movie.id}`}
+        className="btn btn-sm btn-link text-success p-0">Ver Detalhes</button>
           </div>
         </div>
       </div>
@@ -173,7 +171,7 @@ function SeriesCard({ movie }: { movie: Serie }) {
             release_date: movie.first_air_date,
             genres: [], // Adapte conforme necessário se você tiver gêneros
           }}
-          modalId="quickViewModal2"
+          modalId={`quickViewModal-serie-${movie.id}`}
         />
     </div>
     
