@@ -3,6 +3,26 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import MovieDetailsModal from "./MovieDetailsModal";
+import filmesJson from '../../../filmes.json';
+
+// Função para transformar { "page 1": [...], "page 2": [...] } em array de páginas
+function getPageArray(json: Record<string, unknown>): Movie[][] {
+  const pageArrays: Movie[][] = [];
+  Object.keys(json)
+    .filter((key) => key.toLowerCase().startsWith('page'))
+    .sort((a, b) => {
+      const numA = parseInt(a.replace(/\D/g, ''));
+      const numB = parseInt(b.replace(/\D/g, ''));
+      return numA - numB;
+    })
+    .forEach((key) => {
+      const arr = json[key];
+      if (Array.isArray(arr)) pageArrays.push(arr as Movie[]);
+    });
+  return pageArrays;
+}
+
+const pages = getPageArray(filmesJson as Record<string, unknown>);
 
 type Movie = {
   id: number;
@@ -16,42 +36,21 @@ type Movie = {
 
 export default function Inicio() {
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    async function fetchMovies() {
-      try {
-        const res = await fetch('https://api-movie-sigma.vercel.app/api/filmes?keyid=60b55db2a598d09f914411a36840d1cb');
-        const data = await res.json();
-        const moviesArr: Movie[] = Array.isArray(data)
-          ? data
-              .filter((item) => typeof item.title === 'string' && !!item.title)
-              .map((item) => ({
-                id: item.id,
-                title: item.title || 'Filme sem título',
-                overview: item.overview || '',
-                poster_path: item.poster_path ?? null,
-                release_date: item.release_date || '',
-                vote_average: item.vote_average ?? 0,
-                genres: item.genres ?? [],
-              }))
-          : [];
-        const sorted = [...moviesArr].sort((a, b) => {
-          const yearA = a.release_date ? parseInt(a.release_date.slice(0, 4)) : 0;
-          const yearB = b.release_date ? parseInt(b.release_date.slice(0, 4)) : 0;
-          return yearB - yearA;
-        });
-        setMovies(sorted.slice(0, 20));
-      } catch {
-        setMovies([]);
-      }
+    setLoading(true);
+    try {
+      const firstPage = pages.length > 0 ? pages[0] : [];
+      setMovies(firstPage);
+    } catch {
+      setMovies([]);
     }
-    fetchMovies();
+    setLoading(false);
   }, []);
 
   return (
     <>
-    
-
       <div className="container py-5">
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h2 className="fw-bold">Em Alta</h2>
@@ -67,9 +66,10 @@ export default function Inicio() {
             </li>
           </ul>
         </div>
-        {movies.length > 0 && <MovieCardplayer movie={movies[0]} />}
+        {loading && <div className="text-center">Carregando...</div>}
+        {!loading && movies.length > 0 && <MovieCardplayer movie={movies[0]} />}
         <div className="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-4">
-          {movies.slice(1, 20).map((movie) => (
+          {!loading && movies.slice(1, 20).map((movie) => (
             <MovieCard key={movie.id} movie={movie} />
           ))}
         </div>

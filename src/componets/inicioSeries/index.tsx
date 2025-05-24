@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import MovieDetailsModal from "../inicio/MovieDetailsModal";
+import seriesJson from '../../../series.json';
 
 type Serie = {
   id: number;
@@ -14,29 +15,58 @@ type Serie = {
   vote_average: number;
 };
 
+// Função para transformar { "page 1": [...], "page 2": [...] } em array de páginas
+function getPageArray(json: Record<string, unknown>): Serie[][] {
+  const pageArrays: Serie[][] = [];
+  Object.keys(json)
+    .filter((key) => key.toLowerCase().startsWith('page'))
+    .sort((a, b) => {
+      const numA = parseInt(a.replace(/\D/g, ''));
+      const numB = parseInt(b.replace(/\D/g, ''));
+      return numA - numB;
+    })
+    .forEach((key) => {
+      const arr = json[key];
+      if (Array.isArray(arr)) pageArrays.push(arr as Serie[]);
+    });
+  return pageArrays;
+}
+
+const pages = getPageArray(seriesJson as Record<string, unknown>);
+
+function getMostRecentPage(pages: Serie[][]): Serie[] {
+  let mostRecentPage: Serie[] = [];
+  let mostRecentDate = 0;
+  pages.forEach((page) => {
+    // Busca a maior data de cada página
+    const maxDate = page.reduce((max, item) => {
+      const d = new Date(item.first_air_date).getTime();
+      return d > max ? d : max;
+    }, 0);
+    if (maxDate > mostRecentDate) {
+      mostRecentDate = maxDate;
+      mostRecentPage = page;
+    }
+  });
+  return mostRecentPage;
+}
+
 export default function Series() {
-  const [series, setSerie] = useState<Serie[]>([]);
+  const [seriesList, setSeriesList] = useState<Serie[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchSeries() {
-      try {
-        setLoading(true);
-        setError(null);
-        const res = await fetch('https://api-movie-sigma.vercel.app/api/series?keyid=60b55db2a598d09f914411a36840d1cb');
-        if (!res.ok) throw new Error('Erro ao buscar séries: ' + res.status);
-        const data = await res.json();
-        setSerie(Array.isArray(data) ? data : []);
-      } catch (err) {
-        const errorMsg = err instanceof Error ? err.message : 'Erro desconhecido';
-        setError(errorMsg);
-        setSerie([]);
-      } finally {
-        setLoading(false);
-      }
+    setLoading(true);
+    setError(null);
+    try {
+      const mostRecent = getMostRecentPage(pages);
+      setSeriesList(mostRecent);
+    } catch {
+      setError('Erro ao carregar as séries do arquivo local.');
+      setSeriesList([]);
     }
-    fetchSeries();
+    setLoading(false);
   }, []);
 
   if (loading) return <div>Loading...</div>;
@@ -84,7 +114,7 @@ export default function Series() {
           </Link>
         </div>
         <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 justify-content-between g-4">
-          {series.slice(0, 8).map((movie) => (
+          {seriesList.slice(0, 8).map((movie) => (
             <SeriesCard key={movie.id} movie={movie} />
           ))}
         </div>
@@ -101,7 +131,7 @@ function SeriesCard({ movie }: { movie: Serie }) {
           <Image
             src={`https://image.tmdb.org/t/p/original/${movie.poster_path ? movie.poster_path : movie.backdrop_path}`}
             className="card-img-top p-3"
-            alt={movie.name}
+            alt={movie.name ? movie.name : "Poster da série"}
             width={300}
             height={450}
             style={{ height: '450px', objectFit: 'cover' }}

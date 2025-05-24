@@ -6,6 +6,7 @@ import Image from "next/image";
 import Navbar from "@/componets/navbar";
 // Verifique o caminho correto para MovieDetailsModal
 import MovieDetailsModal from "../../componets/inicio/MovieDetailsModal";
+import filmesJson from '../../../filmes.json';
 
 // Definição do tipo Movie
 type Movie = {
@@ -19,98 +20,63 @@ type Movie = {
   genres?: { id: number; name: string }[]; // Adicionado para ser compatível com MovieDetailsModal
 };
 
+// Função para transformar { "page 1": [...], "page 2": [...] } em array de páginas
+function getPageArray(json: Record<string, unknown>): Movie[][] {
+  const pageArrays: Movie[][] = [];
+  Object.keys(json)
+    .filter((key) => key.toLowerCase().startsWith('page'))
+    .sort((a, b) => {
+      const numA = parseInt(a.replace(/\D/g, ''));
+      const numB = parseInt(b.replace(/\D/g, ''));
+      return numA - numB;
+    })
+    .forEach((key) => {
+      const arr = json[key];
+      if (Array.isArray(arr)) pageArrays.push(arr as Movie[]);
+    });
+  return pageArrays;
+}
+
+const pages = getPageArray(filmesJson as Record<string, unknown>);
+
 // ==============================================================================
 // Componente principal: Filmes
 // ==============================================================================
 export default function Filmes() {
-  const [allMoviesData, setAllMoviesData] = useState<Movie[]>([]); // Armazena todos os filmes carregados do JSON
-  const [movies, setMovies] = useState<Movie[]>([]); // Filmes para a página atual (paginados)
+  const [movies, setMovies] = useState<Movie[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(true); // Estado para controle de carregamento
-  const [error, setError] = useState<string | null>(null); // Estado para controle de erros
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const pageSize = 20; // Quantidade de filmes por página
-
-  // --- useEffect 1: Carrega TODOS os filmes do JSON local UMA ÚNICA VEZ ---
+  // --- useEffect 1: Carrega os filmes da página atual ---
   useEffect(() => {
-    async function fetchAllMovies() {
-      try {
-        setLoading(true); // Inicia o estado de carregamento
-        setError(null);   // Limpa qualquer erro anterior
-
-        const res = await fetch('https://api-movie-sigma.vercel.app/api/filmes?keyid=60b55db2a598d09f914411a36840d1cb'); // Faz a requisição ao arquivo JSON local
-
-        if (!res.ok) {
-          throw new Error(`Erro ao carregar filmes: ${res.status} ${res.statusText}`);
-        }
-
-        const data = await res.json();
-
-        // Mapeia e filtra os dados para garantir que são do tipo Movie e possuem título
-        const moviesArr: Movie[] = Array.isArray(data)
-          ? data
-              .filter((item: Record<string, unknown>) => typeof item.title === 'string' && !!item.title)
-              .map((item: Record<string, unknown>) => ({
-                id: item.id as number,
-                title: (item.title as string) || 'Filme sem título',
-                overview: (item.overview as string) || '',
-                poster_path: item.poster_path ? String(item.poster_path) : null,
-                backdrop_path: item.backdrop_path ? String(item.backdrop_path) : null,
-                release_date: (item.release_date as string) || '',
-                vote_average: typeof item.vote_average === 'number' ? item.vote_average : 0,
-                genres: Array.isArray(item.genres) ? item.genres : [],
-              }))
-          : [];
-
-        // Ordena todos os filmes carregados por ano de lançamento (mais recente primeiro)
-        const sorted = [...moviesArr].sort((a, b) => {
-          const yearA = a.release_date ? parseInt(a.release_date.slice(0, 4)) : 0;
-          const yearB = b.release_date ? parseInt(b.release_date.slice(0, 4)) : 0;
-          return yearB - yearA;
-        });
-
-        setAllMoviesData(sorted); // Armazena todos os filmes ordenados
-        setTotalPages(Math.ceil(sorted.length / pageSize)); // Calcula o total de páginas
-        setPage(1); // Garante que a página inicial seja 1 ao carregar novos dados
-      } catch (err) {
-        const error = err instanceof Error ? err : new Error('Erro desconhecido');
-        console.error("Erro ao buscar filmes do JSON:", error);
-        setError(error.message || 'Ocorreu um erro ao carregar os filmes.');
-        setAllMoviesData([]); // Limpa os dados em caso de erro
-        setMovies([]); // Limpa os filmes da página atual
-        setTotalPages(1); // Reseta o total de páginas
-      } finally {
-        setLoading(false); // Finaliza o estado de carregamento
-      }
+    setLoading(true);
+    setError(null);
+    try {
+      const currentPage = pages && pages[page - 1] ? pages[page - 1] : [];
+      setMovies(currentPage);
+      setTotalPages(pages.length);
+    } catch {
+      setError('Erro ao carregar os filmes do arquivo local.');
+      setMovies([]);
+      setTotalPages(1);
     }
-
-    fetchAllMovies();
-  }, []); // Array de dependências vazio: este useEffect roda apenas uma vez na montagem
-
-  // --- useEffect 2: Aplica a paginação aos filmes já carregados ---
-  useEffect(() => {
-    const start = (page - 1) * pageSize;
-    const end = start + pageSize;
-    setMovies(allMoviesData.slice(start, end)); // Fatia os filmes do array completo para a página atual
-  }, [page, allMoviesData, pageSize]); // Roda quando 'page', 'allMoviesData' ou 'pageSize' mudam
+    setLoading(false);
+  }, [page]);
 
   return (
     <main className="bg-dark text-white min-vh-100">
       <Navbar />
-
       {loading ? (
         <div className="text-center py-5">Carregando filmes...</div>
       ) : error ? (
         <div className="text-center py-5 text-success">Erro: {error}</div>
-      ) : allMoviesData.length === 0 ? (
+      ) : pages.length === 0 ? (
         <div className="text-center py-5 text-white">Nenhum filme encontrado.</div>
       ) : (
         <>
-          {/* Passa `movies` (paginados) e `allMoviesData` (completo) para AlbumGrid */}
-          <AlbumGrid movies={movies} allMoviesData={allMoviesData} />
-
-          {/* Botões de Paginação */}
+          <AlbumGrid movies={movies} allMoviesData={movies} />
           <div className="d-flex justify-content-center my-4 gap-2">
             <button
               className="btn btn-outline-primary"
@@ -174,7 +140,7 @@ function AlbumGrid({ movies, allMoviesData }: { movies: Movie[]; allMoviesData: 
                   <div className="col-md-6 text-start">
                     <span className="badge bg-success mb-2">Destaque</span>
                     <h1 className="display-4 fw-bold mb-3">{featuredMovie.title}</h1>
-                    <p className="lead mb-4 text-truncate-3">
+                    <p className="lead mb-4 text-truncate-3 text-truncate">
                       {featuredMovie.overview || "Nenhuma descrição disponível para este filme."}
                     </p>
                     <div className="d-flex gap-2">

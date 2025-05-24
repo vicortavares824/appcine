@@ -5,6 +5,27 @@ import Link from "next/link";
 import Image from "next/image";
 import Navbar from "@/componets/navbar";
 import MovieDetailsModal from "../../componets/inicio/MovieDetailsModal";
+// Corrige importação para garantir compatibilidade com Next.js/Turbopack
+import seriesJson from '../../../series.json';
+
+// Garante que a estrutura é a esperada
+function getPageArray(json: Record<string, unknown>): Serie[][] {
+  const pageArrays: Serie[][] = [];
+  Object.keys(json)
+    .filter((key) => key.toLowerCase().startsWith('page'))
+    .sort((a, b) => {
+      const numA = parseInt(a.replace(/\D/g, ''));
+      const numB = parseInt(b.replace(/\D/g, ''));
+      return numA - numB;
+    })
+    .forEach((key) => {
+      const arr = json[key];
+      if (Array.isArray(arr)) pageArrays.push(arr as Serie[]);
+    });
+  return pageArrays;
+}
+
+const pages = getPageArray(seriesJson as Record<string, unknown>);
 
 type Serie = {
   id: number;
@@ -19,69 +40,25 @@ type Serie = {
 };
 
 export default function Series() {
-  const [allSeriesData, setAllSeriesData] = useState<Serie[]>([]);
-  const [series, setSeries] = useState<Serie[]>([]);
+  const [seriesPage, setSeriesPage] = useState<Serie[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const pageSize = 20;
-
   useEffect(() => {
-    async function fetchAllSeries() {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const res = await fetch('https://api-movie-sigma.vercel.app/api/series?keyid=60b55db2a598d09f914411a36840d1cb');
-
-        if (!res.ok) {
-          throw new Error(`Erro ao carregar séries: ${res.status} ${res.statusText}`);
-        }
-
-        const data = await res.json();
-
-        const seriesArr: Serie[] = Array.isArray(data)
-          ? data.map((item: Record<string, unknown>) => ({
-              id: item.id as number,
-              name: (item.name as string) || "Série sem nome",
-              overview: (item.overview as string) || "",
-              poster_path: item.poster_path ? String(item.poster_path) : null,
-              backdrop_path: item.backdrop_path ? String(item.backdrop_path) : null,
-              first_air_date: (item.first_air_date as string) || "",
-              vote_average: typeof item.vote_average === 'number' ? item.vote_average : 0,
-              genres: Array.isArray(item.genres) ? item.genres : [],
-              seasons: Array.isArray(item.seasons) ? item.seasons : [],
-            }))
-          : [];
-
-        const sorted = [...seriesArr].sort((a, b) => {
-          const yearA = a.first_air_date ? parseInt(a.first_air_date.slice(0, 4)) : 0;
-          const yearB = b.first_air_date ? parseInt(b.first_air_date.slice(0, 4)) : 0;
-          return yearB - yearA;
-        });
-
-        setAllSeriesData(sorted);
-        setPage(1);
-      } catch (err) {
-        const error = err instanceof Error ? err : new Error('Erro desconhecido');
-        console.error("Erro ao buscar todas as séries:", error);
-        setError(error.message || "Ocorreu um erro ao carregar as séries.");
-        setAllSeriesData([]);
-      } finally {
-        setLoading(false);
-      }
+    setLoading(true);
+    setError(null);
+    try {
+      const currentPage = pages && pages[page - 1] ? pages[page - 1] : [];
+      setSeriesPage(currentPage);
+    } catch {
+      setError('Erro ao carregar as séries do arquivo local.');
+      setSeriesPage([]);
     }
-    fetchAllSeries();
-  }, []);
+    setLoading(false);
+  }, [page]);
 
-  useEffect(() => {
-    const start = (page - 1) * pageSize;
-    const end = start + pageSize;
-    setSeries(allSeriesData.slice(start, end));
-  }, [page, allSeriesData]);
-
-  const totalPages = Math.ceil(allSeriesData.length / pageSize);
+  const totalPages = Array.isArray(pages) ? pages.length : 1;
 
   return (
     <main>
@@ -90,12 +67,12 @@ export default function Series() {
         <div className="text-center py-5">Carregando séries...</div>
       ) : error ? (
         <div className="text-center py-5 text-success">Erro: {error}</div>
-      ) : allSeriesData.length === 0 ? (
+      ) : seriesPage.length === 0 ? (
         <div className="text-center py-5 text-white">Nenhuma série encontrada.</div>
       ) : (
         <>
           <div className="row row-cols-3 row-cols-md-4 g-3 mx-5 my-4">
-            {series.map((serie) => (
+            {seriesPage.map((serie) => (
               <SerieCard key={serie.id} serie={serie} />
             ))}
           </div>
