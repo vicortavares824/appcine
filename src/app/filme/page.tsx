@@ -49,7 +49,7 @@ export default function Filmes() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // --- useEffect 1: Carrega os filmes da página atual ---
+
   useEffect(() => {
     setLoading(true);
     setError(null);
