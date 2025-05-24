@@ -1,92 +1,173 @@
+"use client";
+import React from "react";
 import Link from "next/link";
 
-export default function Navbar() {
-    return (
-   <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div className="container">
-          <Link href="/" className="navbar-brand d-flex align-items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              fill="currentColor"
-              className="bi bi-film me-2 text-success"
-              viewBox="0 0 16 16"
+type NavbarProps = {
+  onBuscaInput?: (ev: React.ChangeEvent<HTMLInputElement>) => void;
+  onBuscaKeyDown?: (ev: React.KeyboardEvent<HTMLInputElement>) => void;
+  buscaInput?: string;
+  onBuscaClick?: () => void;
+};
+export default function Navbar({
+  onBuscaInput,
+  onBuscaKeyDown,
+  buscaInput,
+  onBuscaClick,
+}: NavbarProps) {
+  return (
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div className="container">
+        <Link href="/" className="navbar-brand d-flex align-items-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="currentColor"
+            className="bi bi-film me-2 text-success"
+            viewBox="0 0 16 16"
+          >
+            <path d="M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2v-2z" />
+          </svg>
+          CineStream
+        </Link>
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbar"
+          aria-controls="navbar"
+          aria-expanded="false"
+          aria-label="Alternar navegação"
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
+        <div className="collapse navbar-collapse" id="navbar">
+          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+            <li className="nav-item">
+              <Link href="/" className="nav-link" aria-current="page">
+                Início
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link href="/filme" className="nav-link">
+                Filmes
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link href="/serie" className="nav-link">
+                Séries
+              </Link>
+            </li>
+            <li className="nav-item dropdown">
+              <a
+                className="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                Categoria
+              </a>
+              <div className="dropdown-menu" aria-labelledby="navbarDropdown">
+                <Link href="/categoria/drama" className="dropdown-item">
+                  Drama
+                </Link>
+                <Link href="/categoria/acao" className="dropdown-item">
+                  Ação
+                </Link>
+                <Link href="/categoria/comedia" className="dropdown-item">
+                  Comédia
+                </Link>
+                <Link href="/categoria/terror" className="dropdown-item">
+                  Terror
+                </Link>
+                <Link href="/categoria/romance" className="dropdown-item">
+                  Romance
+                </Link>
+              </div>
+            </li>
+          </ul>
+          <form className="d-flex" role="search" onSubmit={(e) => e.preventDefault()}>
+            <button
+              type="button"
+              className="btn btn-success me-4"
+              data-bs-toggle="modal"
+              data-bs-target="#loginModal"
+              aria-label="Abrir modal de login"
             >
-              <path d="M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2v-2z" />
-            </svg>
-            CineStream
-          </Link>
-          <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
-    <span className="navbar-toggler-icon"></span>
-  </button>
-          <div className="collapse navbar-collapse" id="navbar">
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              <li className="nav-item">
-                <Link href="/" className="nav-link" aria-current="page">
-                  Início
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link href="/filme" className="nav-link">
-                  Filmes
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link href="/serie" className="nav-link">
-                  Séries
-                </Link>
-              </li>
-             <li className="nav-item dropdown">
-        <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Categoria
-        </a>
-        <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a className="dropdown-item" href="#">Drama</a>
-          <a className="dropdown-item" href="#">Ação</a>
-          <a className="dropdown-item" href="#">Comédia</a>
-          <a className="dropdown-item" href="#">Terror</a>
-          <a className="dropdown-item" href="#">Romance</a> 
+              Login
+            </button>
+            <input
+              className="form-control me-2"
+              type="search"
+              placeholder="Busca"
+              aria-label="Buscar filmes ou séries"
+              value={buscaInput ?? ""}
+              onChange={onBuscaInput}
+              onKeyDown={onBuscaKeyDown}
+            />
+            <button
+              type="button"
+              className="btn btn-outline-success"
+              onClick={onBuscaClick}
+            >
+              Buscar
+            </button>
+          </form>
         </div>
-      </li>
-            </ul>
-            <form className="d-flex">
-              
-              <button type="button" className="btn btn-success me-4" data-bs-toggle="modal" data-bs-target="#loginModal">
-                Login
-              </button>
-              <input className="form-control me-2" type="search" placeholder="Buscar" aria-label="Search" />
-              <button className="btn btn-outline-success" type="submit">
-                Buscar
-              </button>
-            </form>
-          </div>
-        </div>
-         <div className="modal fade" id="loginModal" tabIndex={-1} aria-labelledby="loginModalLabel" aria-hidden="true">
+      </div>
+      <div
+        className="modal fade"
+        id="loginModal"
+        tabIndex={-1}
+        aria-labelledby="loginModalLabel"
+        aria-hidden="true"
+      >
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title" id="loginModalLabel">
                 Entrar na sua conta
               </h5>
-              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Fechar"
+              ></button>
             </div>
             <div className="modal-body">
-              <form>
+              <form onSubmit={(e) => e.preventDefault()}>
                 <div className="mb-3">
                   <label htmlFor="email" className="form-label">
                     Email
                   </label>
-                  <input type="email" className="form-control" id="email" placeholder="seu@email.com" />
+                  <input
+                    type="email"
+                    className="form-control"
+                    id="email"
+                    placeholder="seu@email.com"
+                  />
                 </div>
                 <div className="mb-3">
                   <label htmlFor="password" className="form-label">
                     Senha
                   </label>
-                  <input type="password" className="form-control" id="password" placeholder="Sua senha" />
+                  <input
+                    type="password"
+                    className="form-control"
+                    id="password"
+                    placeholder="Sua senha"
+                  />
                 </div>
                 <div className="mb-3 form-check">
-                  <input type="checkbox" className="form-check-input" id="rememberMe" />
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    id="rememberMe"
+                  />
                   <label className="form-check-label" htmlFor="rememberMe">
                     Lembrar de mim
                   </label>
@@ -143,7 +224,6 @@ export default function Navbar() {
           </div>
         </div>
       </div>
-      </nav>
-
-    )
+    </nav>
+  );
 }
