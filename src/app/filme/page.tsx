@@ -30,7 +30,7 @@ export default function Filmes() {
   const [loading, setLoading] = useState(true); // Estado para controle de carregamento
   const [error, setError] = useState<string | null>(null); // Estado para controle de erros
 
-  const pageSize = 20; // Quantidade de filmes por página
+  const pageSize = 2000; // Quantidade de filmes por página
 
   // --- useEffect 1: Carrega TODOS os filmes do JSON local UMA ÚNICA VEZ ---
   useEffect(() => {

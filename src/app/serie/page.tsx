@@ -25,7 +25,7 @@ export default function Series() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const pageSize = 20;
+  const pageSize = 2000;
 
   useEffect(() => {
     async function fetchAllSeries() {
