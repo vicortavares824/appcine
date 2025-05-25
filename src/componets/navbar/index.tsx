@@ -44,9 +44,17 @@ export default function Navbar({
         <div className="collapse navbar-collapse" id="navbar">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
-              <Link href="/" className="nav-link" aria-current="page">
-                Início
-              </Link>
+            <Link
+            href="/"
+            className="nav-link"
+            aria-current="page"
+            onClick={(e) => {
+              e.preventDefault();
+              window.location.href = "/";
+            }}
+          >
+            Início
+          </Link>
             </li>
             <li className="nav-item">
               <Link href="/filme" className="nav-link">
