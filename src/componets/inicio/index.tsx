@@ -37,7 +37,7 @@ type Movie = {
 export default function Inicio() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(false);
-
+  const numero = Math.floor(Math.random() * 10) + 1;
   useEffect(() => {
     setLoading(true);
     try {
@@ -54,7 +54,7 @@ export default function Inicio() {
       <div className="container py-5">
         <Select/>
         {loading && <div className="text-center">Carregando...</div>}
-        {!loading && movies.length > 0 && <MovieCardplayer movie={movies[0]} />}
+        {!loading && movies.length > 0 && <MovieCardplayer movie={movies[numero]} />}
         <div className="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-4">
           {!loading && movies.slice(1, 20).map((movie) => (
             <MovieCard key={movie.id} movie={movie} />
