@@ -17,7 +17,7 @@ type MediaItem = {
   title?: string;
   titulo?: string;
   overview?: string;
-  poster_path?: string;
+  poster_path?: string | null; // Aceita null
   vote_average?: number;
 };
 
@@ -25,29 +25,33 @@ export default function Home() {
   const [buscaInput, setBuscaInput] = useState("");
   const [busca, setBusca] = useState("");
 
-  // Junta todos os filmes e séries
-  const filmes: MediaItem[] = Array.isArray(filmesJson) ? filmesJson : Object.values(filmesJson).flat();
-  const series: MediaItem[] = Array.isArray(seriesJson) ? seriesJson : Object.values(seriesJson).flat();
+  // Junta todos os filmes e séries, mapeando para garantir o tipo correto
+  const filmes: MediaItem[] = Array.isArray(filmesJson)
+    ? (filmesJson as MediaItem[])
+    : (Object.values(filmesJson).flat() as MediaItem[]);
+  const series: MediaItem[] = Array.isArray(seriesJson)
+    ? (seriesJson as MediaItem[])
+    : (Object.values(seriesJson).flat() as MediaItem[]);
 
   // Busca por título
   const buscaAtiva = busca.trim().length > 0;
-  const filmesPorTitulo = filmes.filter(item =>
+  const filmesPorTitulo = filmes.filter((item: MediaItem) =>
     (item.title || item.titulo || "").toLowerCase().includes(busca.toLowerCase())
   );
-  const seriesPorTitulo = series.filter(item =>
+  const seriesPorTitulo = series.filter((item: MediaItem) =>
     (item.title || item.titulo || "").toLowerCase().includes(busca.toLowerCase())
   );
 
   // Se não encontrou pelo título, busca pelo overview
   const filmesFiltrados = filmesPorTitulo.length > 0
     ? filmesPorTitulo
-    : filmes.filter(item =>
+    : filmes.filter((item: MediaItem) =>
         (item.overview || "").toLowerCase().includes(busca.toLowerCase())
       );
 
   const seriesFiltradas = seriesPorTitulo.length > 0
     ? seriesPorTitulo
-    : series.filter(item =>
+    : series.filter((item: MediaItem) =>
         (item.overview || "").toLowerCase().includes(busca.toLowerCase())
       );
 
@@ -87,7 +91,7 @@ export default function Home() {
                 <>
                   <h4>Filmes</h4>
                   <div className="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-4">
-                    {filmesFiltrados.map((movie, idx) => (
+                    {filmesFiltrados.map((movie: MediaItem, idx: number) => (
                       <div
                         className="col-sm-1 col-md-4 col-lg-3"
                         key={`filme-${movie.id ?? "noid"}-${idx}`}
@@ -126,7 +130,7 @@ export default function Home() {
                 <>
                   <h4>Séries</h4>
                   <div className="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-4">
-                    {seriesFiltradas.map((serie, idx) => (
+                    {seriesFiltradas.map((serie: MediaItem, idx: number) => (
                       <div
                         className="col-sm-1 col-md-4 col-lg-3"
                         key={`serie-${serie.id ?? "noid"}-${idx}`}
